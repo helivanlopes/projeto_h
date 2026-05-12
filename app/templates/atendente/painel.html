@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Fila de Tickets Abertos</h2>
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Data de Criação</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ticket in tickets_abertos %}
+        <tr>
+            <td>{{ ticket.id }}</td>
+            <td>{{ ticket.titulo }}</td>
+            <td>{{ ticket.data_criacao.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>
+                <form action="{{ url_for('main.assumir_ticket', id=ticket.id) }}" method="POST">
+                    <button type="submit" class="btn btn-primary btn-sm">Assumir Chamado</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4" class="text-center">Nenhum ticket aberto no momento.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

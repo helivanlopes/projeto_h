@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="text-center">Abrir Novo Ticket</h2>
+        <form method="POST" class="mt-4">
+            <div class="mb-3">
+                <label for="titulo" class="form-label">Título</label>
+                <input type="text" name="titulo" id="titulo" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="descricao" class="form-label">Descrição do Problema</label>
+                <textarea name="descricao" id="descricao" class="form-control" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Abrir Ticket</button>
+            <a href="{{ url_for('main.index') }}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
