@@ -33,7 +33,8 @@ def login():
         usuario = Usuario.query.filter_by(email=email).first()
         if usuario and usuario.check_password(senha):
             login_user(usuario)
-            return redirect(url_for('main.index'))
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('main.index'))
         flash("Email ou senha inválidos.", "danger")
     return render_template('login.html')
 

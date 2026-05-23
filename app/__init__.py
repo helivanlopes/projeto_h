@@ -7,7 +7,7 @@ from app.models import db, Usuario
 load_dotenv()
 
 login_manager = LoginManager()
-login_manager.login_view = 'login'
+login_manager.login_view = 'main.login'
 
 @login_manager.user_loader
 def load_user(user_id):
