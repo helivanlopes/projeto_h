@@ -6,3 +6,5 @@ pytest
 pytest-flask
 pytest-playwright
 coverage
+flask-caching
+apscheduler

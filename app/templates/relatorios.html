@@ -6,34 +6,39 @@
     <p class="text-muted">Visão geral da performance de atendimento.</p>
     
     <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Tickets Abertos</h5>
-                    <p class="card-text fs-2">--</p>
-                </div>
+        <div class="col-md-6">
+            <div class="card p-3">
+                <canvas id="ticketChart"></canvas>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Concluídos</h5>
-                    <p class="card-text fs-2">--</p>
-                </div>
+        <div class="col-md-6">
+            <div class="card p-3">
+                <h5>Estatísticas Resumidas</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between">Tickets Abertos <span class="badge bg-primary">--</span></li>
+                    <li class="list-group-item d-flex justify-content-between">Concluídos <span class="badge bg-success">--</span></li>
+                    <li class="list-group-item d-flex justify-content-between">Em Andamento <span class="badge bg-warning">--</span></li>
+                </ul>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Em Andamento</h5>
-                    <p class="card-text fs-2">--</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="alert alert-info mt-4">
-        Os dados estatísticos detalhados estarão disponíveis após a coleta de métricas de atendimento.
     </div>
 </div>
+
+<script>
+const ctx = document.getElementById('ticketChart').getContext('2d');
+const ticketChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: ['Abertos', 'Concluídos', 'Em Andamento'],
+        datasets: [{
+            label: 'Tickets',
+            data: [12, 19, 3],
+            backgroundColor: ['#0d6efd', '#198754', '#ffc107'],
+        }]
+    },
+    options: {
+        responsive: true
+    }
+});
+</script>
 {% endblock %}

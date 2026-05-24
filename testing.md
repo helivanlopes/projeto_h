@@ -42,7 +42,21 @@ A estratégia baseia-se na pirâmide de testes, priorizando testes unitários e 
 |---|---|---|---|
 | ADM-01 | Cadastro de Gestor | Alta | Admin cadastra um novo usuário com papel 'gestor'. |
 
-### 3.5. Testes de Interface (E2E)
+### 3.8. Performance e Otimização
+| ID | Cenário | Prioridade | Descrição |
+|---|---|---|---|
+| PERF-01 | Cache de Usuários | Média | Verificar se a listagem de usuários (`gerenciar_equipe`) é servida via cache. |
+| PERF-02 | Execução de Job | Alta | Verificar se o job de limpeza agendado é executado corretamente. |
+
+### 3.9. Frontend e Interface
+| ID | Cenário | Prioridade | Descrição |
+|---|---|---|---|
+| UI-01 | Redirecionamento Pós-login | Crítica | Validar redirecionamento para o dashboard correto por papel. |
+| UI-02 | Ordenação de Grid | Média | Verificar ordenação de colunas na tabela de usuários/tickets. |
+| UI-03 | Responsividade | Alta | Verificar layout em dispositivos desktop, tablet e mobile. |
+| UI-04 | Gráficos de Relatório | Média | Verificar renderização do gráfico na tela de relatórios. |
+
+## 4. Implementação TDD (Exemplo de Suíte)
 | ID | Cenário | Prioridade | Descrição |
 |---|---|---|---|
 | E2E-01 | Fluxo Completo Chamado | Crítica | Cliente abre ticket -> Atendente assume -> Status reflete no Painel. |

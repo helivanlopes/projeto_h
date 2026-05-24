@@ -2,19 +2,18 @@
 
 {% block content %}
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Gerenciar Equipe</h2>
-        <a href="{{ url_for('main.criar_usuario') }}" class="btn btn-success">Adicionar Novo Usuário</a>
+        <a href="{{ url_for('main.criar_usuario') }}" class="btn btn-success"><i class="fas fa-plus"></i> Adicionar</a>
     </div>
-    <p class="text-muted">Lista de todos os usuários do sistema.</p>
     
-    <table class="table table-striped mt-4">
+    <table class="table table-striped mt-4" id="usersTable">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>Papel</th>
+                <th onclick="sortTable(0)" style="cursor:pointer">ID <i class="fas fa-sort"></i></th>
+                <th onclick="sortTable(1)" style="cursor:pointer">Nome <i class="fas fa-sort"></i></th>
+                <th onclick="sortTable(2)" style="cursor:pointer">Email <i class="fas fa-sort"></i></th>
+                <th onclick="sortTable(3)" style="cursor:pointer">Papel <i class="fas fa-sort"></i></th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -26,13 +25,13 @@
                 <td>{{ usuario.email }}</td>
                 <td><span class="badge bg-secondary">{{ usuario.papel }}</span></td>
                 <td>
-                    <button class="btn btn-sm btn-outline-primary">Editar</button>
+                    <button class="btn btn-sm btn-outline-primary" title="Editar"><i class="fas fa-edit"></i></button>
                     {% if current_user.papel == 'proprietario' %}
                     <form action="{{ url_for('main.excluir_usuario', id=usuario.id) }}" method="POST" style="display:inline;">
-                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?')">Remover</button>
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Remover" onclick="return confirm('Tem certeza?')"><i class="fas fa-trash"></i></button>
                     </form>
                     {% else %}
-                    <button class="btn btn-sm btn-outline-danger" disabled>Remover</button>
+                    <button class="btn btn-sm btn-outline-danger" disabled title="Remover"><i class="fas fa-trash"></i></button>
                     {% endif %}
                 </td>
             </tr>
@@ -40,4 +39,43 @@
         </tbody>
     </table>
 </div>
+
+<script>
+function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("usersTable");
+  switching = true;
+  dir = "asc"; 
+  while (switching) {
+    switching = false;
+    rows = table.rows;
+    for (i = 1; i < (rows.length - 1); i++) {
+      shouldSwitch = false;
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          shouldSwitch = true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      switchcount ++;
+    } else {
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+</script>
 {% endblock %}

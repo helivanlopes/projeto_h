@@ -2,13 +2,17 @@ import os
 import logging
 from flask import Flask
 from flask_login import LoginManager
+from flask_caching import Cache
+from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
 from app.models import db, Usuario
+from app.jobs import cleanup_abandoned_tickets
 
 load_dotenv()
 
 login_manager = LoginManager()
 login_manager.login_view = 'main.login'
+cache = Cache(config={'CACHE_TYPE': 'simple'})
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -30,6 +34,12 @@ def create_app():
 
     db.init_app(app)
     login_manager.init_app(app)
+    cache.init_app(app)
+
+    # Scheduler
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=cleanup_abandoned_tickets, trigger="interval", hours=24)
+    scheduler.start()
 
     # Configure Logging
     os.makedirs(app.instance_path, exist_ok=True)
@@ -72,7 +82,13 @@ def create_app():
             admin.set_password(os.getenv('ADMIN_DEFAULT_PASSWORD', 'admin123'))
             db.session.add(admin)
             db.session.commit()
-            print("Default admin user created.")
+            app.logger.info("Default admin user created.")
+
+    # Context Processor for footer
+    @app.context_processor
+    def inject_now():
+        from datetime import datetime
+        return {'datetime_now': datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
 
     # Register routes
     from app import routes

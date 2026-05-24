@@ -46,6 +46,16 @@ Caso o `docker-compose` não esteja instalado:
 - **Banco de Dados:** Utiliza SQLite localizado em `instance/lordcrm.db`. Este volume é persistente.
 - **Modo Debug:** Ativado por padrão no Docker Compose (`FLASK_DEBUG=1`).
 
+## 🚀 Otimizações Realizadas
+- **Modularidade:** Lógica de negócio extraída para camada de serviços.
+- **Cache:** Utiliza `Flask-Caching` para listagem de equipes.
+- **Jobs:** `APScheduler` para manutenção automática (limpeza de tickets).
+- **Frontend:**
+  - Redirecionamento dinâmico pós-login.
+  - Tabelas com ordenação e ações via ícones.
+  - Gráficos interativos (Chart.js) nos relatórios.
+  - Rodapé dinâmico com data/hora.
+
 ## 📋 Comandos Úteis
 - **Ver Logs:** `docker-compose logs -f`
 - **Parar Ambiente:** `docker-compose down`

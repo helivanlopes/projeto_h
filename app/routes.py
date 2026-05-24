@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from app.models import db, Usuario, Ticket
+from app import cache
+from app.services import get_all_users, create_user, delete_user
 from functools import wraps
 
 bp = Blueprint('main', __name__)
@@ -36,6 +38,13 @@ def login():
         if usuario and usuario.check_password(senha):
             login_user(usuario)
             current_app.logger.info(f"Usuário {usuario.email} ({usuario.papel}) fez login.")
+            
+            # Redirecionamento baseado no papel
+            if usuario.papel in ['proprietario', 'admin']:
+                return redirect(url_for('main.gerenciar_equipe'))
+            elif usuario.papel == 'gestor':
+                return redirect(url_for('main.relatorios'))
+            
             next_page = request.args.get('next')
             return redirect(next_page or url_for('main.index'))
         current_app.logger.warning(f"Tentativa de login falhou para email: {email}")
@@ -58,15 +67,12 @@ def register():
         email = request.form.get('email')
         senha = request.form.get('senha')
         
-        if Usuario.query.filter_by(email=email).first():
+        user = create_user(nome, email, senha, 'cliente')
+        if not user:
             current_app.logger.warning(f"Tentativa de registro com email já existente: {email}")
             flash("Email já cadastrado.", "danger")
             return redirect(url_for('main.register'))
         
-        novo_usuario = Usuario(nome=nome, email=email, papel='cliente')
-        novo_usuario.set_password(senha)
-        db.session.add(novo_usuario)
-        db.session.commit()
         current_app.logger.info(f"Novo cliente registrado: {email}")
         flash("Conta criada com sucesso! Faça login.", "success")
         return redirect(url_for('main.login'))
@@ -113,8 +119,9 @@ def painel_atendente():
 @bp.route('/admin/equipe')
 @login_required
 @role_required(['admin', 'proprietario'])
+@cache.cached(timeout=60, key_prefix='all_users')
 def gerenciar_equipe():
-    usuarios = Usuario.query.all()
+    usuarios = get_all_users()
     return render_template('gerenciar_equipe.html', usuarios=usuarios)
 
 @bp.route('/admin/usuario/novo', methods=['GET', 'POST'])
@@ -133,14 +140,12 @@ def criar_usuario():
             flash("Você não tem permissão para criar administradores ou proprietários.", "danger")
             return redirect(url_for('main.criar_usuario'))
 
-        if Usuario.query.filter_by(email=email).first():
+        user = create_user(nome, email, senha, papel)
+        if not user:
             flash("Email já cadastrado.", "danger")
             return redirect(url_for('main.criar_usuario'))
         
-        novo_usuario = Usuario(nome=nome, email=email, papel=papel)
-        novo_usuario.set_password(senha)
-        db.session.add(novo_usuario)
-        db.session.commit()
+        cache.delete('all_users')
         current_app.logger.info(f"Usuário {current_user.email} criou novo usuário: {email} ({papel})")
         flash(f"Usuário {nome} ({papel}) criado com sucesso!", "success")
         return redirect(url_for('main.gerenciar_equipe'))
@@ -156,10 +161,10 @@ def excluir_usuario(id):
         return redirect(url_for('main.gerenciar_equipe'))
     
     email = usuario.email
-    db.session.delete(usuario)
-    db.session.commit()
-    current_app.logger.info(f"Proprietário {current_user.email} excluiu o usuário {email}")
-    flash(f"Usuário {email} excluído com sucesso.", "success")
+    if delete_user(id):
+        cache.delete('all_users')
+        current_app.logger.info(f"Proprietário {current_user.email} excluiu o usuário {email}")
+        flash(f"Usuário {email} excluído com sucesso.", "success")
     return redirect(url_for('main.gerenciar_equipe'))
 
 @bp.route('/gestor/relatorios')

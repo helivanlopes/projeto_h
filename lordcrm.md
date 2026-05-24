@@ -128,43 +128,46 @@ FUNCAO assumir_ticket(id):
     TICKET = Ticket.query.get(id)
     TICKET.atendente_id = current_user.id
     TICKET.status = 'em_andamento'
-    db.session.commit()
-4.5 Interface e Templates
-/app/templates/base.html
-ação: criar
+    4.5 Interface e Templates
+    /app/templates/base.html
+    ação: criar
 
-descrição: Template mestre com Bootstrap e controle de navegação por perfil.
+    descrição: Template mestre com Bootstrap, FontAwesome, Chart.js e controle de navegação por perfil.
 
-pseudocódigo:
+    pseudocódigo:
 
-HTML
-<nav>
-    {% if current_user.is_authenticated %}
-        {% if current_user.papel == 'admin' %}
-            <a href="/admin">Gerenciar Equipe</a>
-        {% elif current_user.papel == 'gestor' %}
-            <a href="/relatorios">Relatórios</a>
+    HTML
+    <nav>
+        {% if current_user.is_authenticated %}
+            {% if current_user.papel == 'proprietario' or current_user.papel == 'admin' %}
+                <a href="/admin/equipe">Gerenciar Equipe</a>
+            {% elif current_user.papel == 'gestor' %}
+                <a href="/gestor/relatorios">Relatórios</a>
+            {% endif %}
+            <a href="/logout">Sair</a>
+        {% else %}
+            <a href="/login">Entrar</a>
         {% endif %}
-        <a href="/logout">Sair</a>
-    {% else %}
-        <a href="/login">Entrar</a>
-    {% endif %}
-</nav>
-<main>
-    {% block content %}{% endblock %}
-</main>
-/app/templates/atendente/painel.html
-ação: consultar
+    </nav>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        Helivan Lopes | {{ datetime_now }}
+    </footer>
 
-descrição: Visualização da fila de tickets pendentes.
+    /app/templates/atendente/painel.html
+    ação: consultar
 
-pseudocódigo:
+    descrição: Visualização da fila de tickets pendentes com ordenação via JS e ações via ícones.
 
-HTML
-<table>
-    PARA CADA ticket EM tickets_abertos:
-        MOSTRAR ticket.id, ticket.titulo, ticket.data_criacao
-        BOTAO "Assumir Chamado" -> post para /ticket/id/assumirEspecificação Técnica (Spec) - LordCRM
+    /app/templates/admin/equipe.html
+    ação: consultar
+
+    descrição: Visualização de usuários com ordenação via JS e ações via ícones.
+
+    4.6 Otimização e Performance
+    ... (restante do conteúdo)
 Este documento detalha as especificações técnicas para a implementação do sistema LordCRM, seguindo os requisitos de arquitetura MVT, conteinerização e controle de acesso (RBAC).
 
 4.1 Infraestrutura e Configuração Inicial
@@ -323,9 +326,19 @@ ação: criar
 
 descrição: Endpoints para que um Proprietário possa gerenciar outros usuários com papel 'proprietario' e 'admin'.
 
-/app/__init__.py - Sistema de Logs
+/app/__init__.py - Caching e Jobs
 ação: modificar
 
-descrição: Configura o sistema de logging para registrar ações críticas (login, criação de usuários, alteração de tickets). Os logs devem ser persistidos em arquivo e exibidos no console.
+descrição: Integração de `Flask-Caching` para otimização de consultas e `APScheduler` para processamento de tarefas em segundo plano (jobs).
 
-4.5 Interface e Templates
+4.6 Otimização e Performance
+/app/services.py
+ação: criar
+
+descrição: Camada de serviço para abstrair a lógica de negócio dos endpoints (`routes.py`).
+
+/app/jobs.py
+ação: criar
+
+descrição: Definição de tarefas agendadas (jobs) para manutenção automática do sistema.
+
