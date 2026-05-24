@@ -28,9 +28,18 @@ Caso o `docker-compose` não esteja instalado:
 
 4. Acesse a aplicação em: [http://localhost:5000](http://localhost:5000)
 
-## 👤 Credenciais Padrão (Administrador)
-- **Email:** `admin@lordcrm.com`
-- **Senha:** `admin123`
+## 👤 Credenciais Padrão
+- **Email Proprietário:** `owner@lordcrm.com`
+- **Senha Proprietário:** `owner123`
+- **Email Administrador:** `admin@lordcrm.com`
+- **Senha Administrador:** `admin123`
+
+## 👥 Papéis do Sistema
+- **Proprietário:** Nível máximo. Pode criar/gerenciar Proprietários e Administradores.
+- **Administrador:** Gerencia a equipe (atendentes, clientes).
+- **Gestor:** Relatórios.
+- **Atendente:** Atendimento de tickets.
+- **Cliente:** Abertura de tickets.
 
 ## 🛠️ Desenvolvimento
 - **Hot-Reload:** O ambiente está configurado para reiniciar automaticamente ao detectar mudanças no código (`app/`).

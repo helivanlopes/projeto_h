@@ -13,9 +13,10 @@
             <div class="navbar-nav ms-auto">
                 {% if current_user.is_authenticated %}
                     <span class="navbar-text me-3">Olá, {{ current_user.nome }} ({{ current_user.papel }})</span>
-                    {% if current_user.papel == 'admin' %}
+                    {% if current_user.papel == 'proprietario' or current_user.papel == 'admin' %}
                         <a class="nav-link" href="{{ url_for('main.gerenciar_equipe') }}">Gerenciar Equipe</a>
-                    {% elif current_user.papel == 'gestor' %}
+                    {% endif %}
+                    {% if current_user.papel == 'gestor' %}
                         <a class="nav-link" href="{{ url_for('main.relatorios') }}">Relatórios</a>
                     {% elif current_user.papel == 'atendente' %}
                         <a class="nav-link" href="{{ url_for('main.painel_atendente') }}">Painel Atendente</a>

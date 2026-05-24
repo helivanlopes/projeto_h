@@ -318,16 +318,14 @@ HTML
 </nav>
 <main>
     {% block content %}{% endblock %}
-</main>
-/app/templates/atendente/painel.html
-ação: consultar
+/app/routes.py - CRUD de Proprietários
+ação: criar
 
-descrição: Visualização da fila de tickets pendentes.
+descrição: Endpoints para que um Proprietário possa gerenciar outros usuários com papel 'proprietario' e 'admin'.
 
-pseudocódigo:
+/app/__init__.py - Sistema de Logs
+ação: modificar
 
-HTML
-<table>
-    PARA CADA ticket EM tickets_abertos:
-        MOSTRAR ticket.id, ticket.titulo, ticket.data_criacao
-        BOTAO "Assumir Chamado" -> post para /ticket/id/assumir
+descrição: Configura o sistema de logging para registrar ações críticas (login, criação de usuários, alteração de tickets). Os logs devem ser persistidos em arquivo e exibidos no console.
+
+4.5 Interface e Templates

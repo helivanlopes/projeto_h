@@ -11,7 +11,7 @@ class Usuario(UserMixin, db.Model):
     nome = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     senha_hash = db.Column(db.String(128), nullable=False)
-    papel = db.Column(db.Enum('admin', 'gestor', 'atendente', 'cliente', name='papeis_usuario'), nullable=False)
+    papel = db.Column(db.Enum('proprietario', 'admin', 'gestor', 'atendente', 'cliente', name='papeis_usuario'), nullable=False)
 
     def set_password(self, password):
         self.senha_hash = generate_password_hash(password)
