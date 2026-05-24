@@ -97,5 +97,40 @@ def assumir_ticket(id):
 @login_required
 @role_required('atendente')
 def painel_atendente():
-    tickets_abertos = Ticket.query.filter_by(status='aberto').all()
-    return render_template('atendente/painel.html', tickets_abertos=tickets_abertos)
+    tickets = Ticket.query.filter(Ticket.status.in_(['aberto', 'em_andamento'])).all()
+    return render_template('atendente/painel.html', tickets=tickets)
+
+@bp.route('/admin/equipe')
+@login_required
+@role_required('admin')
+def gerenciar_equipe():
+    usuarios = Usuario.query.all()
+    return render_template('gerenciar_equipe.html', usuarios=usuarios)
+
+@bp.route('/admin/usuario/novo', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def criar_usuario():
+    if request.method == 'POST':
+        nome = request.form.get('nome')
+        email = request.form.get('email')
+        senha = request.form.get('senha')
+        papel = request.form.get('papel')
+        
+        if Usuario.query.filter_by(email=email).first():
+            flash("Email já cadastrado.", "danger")
+            return redirect(url_for('main.criar_usuario'))
+        
+        novo_usuario = Usuario(nome=nome, email=email, papel=papel)
+        novo_usuario.set_password(senha)
+        db.session.add(novo_usuario)
+        db.session.commit()
+        flash(f"Usuário {nome} ({papel}) criado com sucesso!", "success")
+        return redirect(url_for('main.gerenciar_equipe'))
+    return render_template('admin/novo_usuario.html')
+
+@bp.route('/gestor/relatorios')
+@login_required
+@role_required('gestor')
+def relatorios():
+    return render_template('relatorios.html')

@@ -1,31 +1,60 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Fila de Tickets Abertos</h2>
-<table class="table table-striped mt-3">
-    <thead>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Fila de Tickets</h2>
+    <span class="badge bg-info">Atendimento em Tempo Real</span>
+</div>
+
+<table class="table table-hover mt-3">
+    <thead class="table-dark">
         <tr>
             <th>ID</th>
             <th>Título</th>
             <th>Data de Criação</th>
+            <th>Status</th>
+            <th>Atendente</th>
             <th>Ações</th>
         </tr>
     </thead>
     <tbody>
-        {% for ticket in tickets_abertos %}
+        {% for ticket in tickets %}
         <tr>
             <td>{{ ticket.id }}</td>
-            <td>{{ ticket.titulo }}</td>
+            <td>
+                <strong>{{ ticket.titulo }}</strong><br>
+                <small class="text-muted">{{ ticket.descricao[:50] }}{% if ticket.descricao|length > 50 %}...{% endif %}</small>
+            </td>
             <td>{{ ticket.data_criacao.strftime('%d/%m/%Y %H:%M') }}</td>
             <td>
-                <form action="{{ url_for('main.assumir_ticket', id=ticket.id) }}" method="POST">
-                    <button type="submit" class="btn btn-primary btn-sm">Assumir Chamado</button>
-                </form>
+                {% if ticket.status == 'aberto' %}
+                    <span class="badge bg-warning text-dark">Aberto</span>
+                {% elif ticket.status == 'em_andamento' %}
+                    <span class="badge bg-primary">Em Andamento</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if ticket.atendente %}
+                    <span class="text-primary font-weight-bold">
+                        <i class="bi bi-person-fill"></i> {{ ticket.atendente.nome }}
+                    </span>
+                {% else %}
+                    <span class="text-muted italic">Aguardando...</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if ticket.status == 'aberto' %}
+                    <form action="{{ url_for('main.assumir_ticket', id=ticket.id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-success btn-sm">Assumir</button>
+                    </form>
+                {% else %}
+                    <button class="btn btn-secondary btn-sm" disabled>Já Assumido</button>
+                {% endif %}
             </td>
         </tr>
         {% else %}
         <tr>
-            <td colspan="4" class="text-center">Nenhum ticket aberto no momento.</td>
+            <td colspan="6" class="text-center py-4">Nenhum ticket pendente no momento.</td>
         </tr>
         {% endfor %}
     </tbody>
