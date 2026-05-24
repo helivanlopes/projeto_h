@@ -2,3 +2,7 @@ Flask
 Flask-SQLAlchemy
 Flask-Login
 python-dotenv
+pytest
+pytest-flask
+pytest-playwright
+coverage
